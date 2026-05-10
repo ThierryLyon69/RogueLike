@@ -1,0 +1,7 @@
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/lib/libraylib.a
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/include/raylib.h
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/include/rlgl.h
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/include/raymath.h
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/lib/pkgconfig/raylib.pc
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/lib/cmake/raylib/raylib-config-version.cmake
+/home/tportal/dev/RogueLike/target/debug/build/raylib-sys-727e5d850383c95b/out/lib/cmake/raylib/raylib-config.cmake
