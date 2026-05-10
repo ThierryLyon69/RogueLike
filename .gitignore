@@ -1,0 +1,25 @@
+# Rust/Cargo
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# Raylib build artifacts
+*.dll
+*.so
+*.dylib
+*.exe
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Other
+*.swp
+*.swo
+.idea/
