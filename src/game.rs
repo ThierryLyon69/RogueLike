@@ -51,6 +51,9 @@ impl Game {
 
         for enemy in &mut self.enemies {
             enemy.update(player_pos, dt);
+            if let Some(dmg) = enemy.try_melee_attack(player_pos) {
+                self.player.damage(dmg);
+            }
         }
 
         if let Some(bullet) = self.player.try_shoot(&self.input) {

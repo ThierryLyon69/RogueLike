@@ -11,6 +11,7 @@ pub struct Enemy {
     hp: i32,
     max_hp: i32,
     kind: EnemyKind,
+    attack_cooldown: f32,
 }
 
 impl Enemy {
@@ -25,10 +26,15 @@ impl Enemy {
             hp: max_hp,
             max_hp,
             kind,
+            attack_cooldown: 0.0,
         }
     }
 
     pub fn update(&mut self, player_pos: Vector2, dt: f32) {
+        if self.attack_cooldown > 0.0 {
+            self.attack_cooldown = (self.attack_cooldown - dt).max(0.0);
+        }
+
         match self.kind {
             EnemyKind::Skeleton => {
                 let detection_radius = 160.0;
@@ -40,9 +46,25 @@ impl Enemy {
                     let dir = to_player.normalized();
                     self.pos += dir * speed * dt;
                 }
-                // Si besoin, ici on pourrait gérer une attaque si dist < attack_radius
             }
             _ => {}
+        }
+    }
+
+    pub fn try_melee_attack(&mut self, player_pos: Vector2) -> Option<i32> {
+        match self.kind {
+            EnemyKind::Skeleton => {
+                let attack_radius = 22.0;
+                let attack_interval = 0.8;
+                let damage = 1;
+                let dist = (player_pos - self.pos).length();
+                if dist <= attack_radius && self.attack_cooldown <= 0.0 {
+                    self.attack_cooldown = attack_interval;
+                    return Some(damage);
+                }
+                None
+            }
+            _ => None,
         }
     }
 

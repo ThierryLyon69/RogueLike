@@ -57,6 +57,10 @@ impl Player {
         self.pos
     }
 
+    pub fn damage(&mut self, dmg: i32) {
+        self.hp -= dmg;
+    }
+
     pub fn update(&mut self, input: &InputState, dt: f32, bounds: Rectangle) {
         let mut dir = input.move_dir;
         if dir.length() > 1.0 {
