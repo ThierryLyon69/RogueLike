@@ -37,8 +37,8 @@ impl Enemy {
 
         match self.kind {
             EnemyKind::Skeleton => {
-                let detection_radius = 160.0;
-                let attack_radius = 22.0;
+                let detection_radius = 220.0;
+                let attack_radius = 32.0;
                 let speed = 80.0;
                 let to_player = player_pos - self.pos;
                 let dist = to_player.length();
@@ -54,7 +54,7 @@ impl Enemy {
     pub fn try_melee_attack(&mut self, player_pos: Vector2) -> Option<i32> {
         match self.kind {
             EnemyKind::Skeleton => {
-                let attack_radius = 22.0;
+                let attack_radius = 32.0;
                 let attack_interval = 0.8;
                 let damage = 1;
                 let dist = (player_pos - self.pos).length();

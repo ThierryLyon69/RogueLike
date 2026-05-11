@@ -102,13 +102,15 @@ impl Player {
         }
 
         let dir = input.aim_pos - self.pos;
-        if dir.length() < 0.01 {
+        let dist = dir.length();
+        let attack_range = 220.0;
+        if dist < 0.01 || dist > attack_range {
             return None;
         }
 
         let vel = dir.normalized() * self.bullet_speed;
         self.fire_timer = self.fire_interval;
-        Some(Bullet::new(self.pos, vel, self.bullet_damage))
+        Some(Bullet::new(self.pos, vel, self.bullet_damage, attack_range))
     }
 
     pub fn draw(&self, renderer: &crate::renderer::Renderer, d: &mut RaylibDrawHandle) {
