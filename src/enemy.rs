@@ -37,7 +37,7 @@ impl Enemy {
 
         match self.kind {
             EnemyKind::Skeleton => {
-                let detection_radius = 160.0;
+                let detection_radius = 220.0;
                 let attack_radius = 22.0;
                 let speed = 80.0;
                 let to_player = player_pos - self.pos;
