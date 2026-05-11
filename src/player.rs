@@ -15,6 +15,7 @@ pub struct Player {
     anim_frame: usize,
     anim_frame_count: usize,
     anim_kind: HeroAnimKind,
+    attack_anim_timer: f32,
     idle_count: usize,
     walk_count: usize,
     attack_count: usize,
@@ -46,6 +47,7 @@ impl Player {
             anim_frame: 0,
             anim_frame_count,
             anim_kind: HeroAnimKind::Idle,
+            attack_anim_timer: 0.0,
             idle_count,
             walk_count,
             attack_count,
@@ -67,7 +69,18 @@ impl Player {
             dir = dir.normalized();
         }
 
-        let next_kind = if dir.length() > 0.01 {
+        if input.shoot {
+            let duration = (self.attack_count.max(1) as f32) * self.anim_frame_time;
+            self.attack_anim_timer = duration.max(self.anim_frame_time);
+        }
+
+        if self.attack_anim_timer > 0.0 {
+            self.attack_anim_timer = (self.attack_anim_timer - dt).max(0.0);
+        }
+
+        let next_kind = if self.attack_anim_timer > 0.0 {
+            HeroAnimKind::Attack
+        } else if dir.length() > 0.01 {
             HeroAnimKind::Walk
         } else {
             HeroAnimKind::Idle
@@ -102,15 +115,20 @@ impl Player {
         }
 
         let dir = input.aim_pos - self.pos;
-        let dist = dir.length();
-        let attack_range = 220.0;
-        if dist < 0.01 || dist > attack_range {
+        if dir.length() < 0.01 {
             return None;
         }
 
+        let attack_range = 220.0;
         let vel = dir.normalized() * self.bullet_speed;
+        let spawn_offset = Vector2::new(6.0, 6.0);
         self.fire_timer = self.fire_interval;
-        Some(Bullet::new(self.pos, vel, self.bullet_damage, attack_range))
+        Some(Bullet::new(
+            self.pos + spawn_offset,
+            vel,
+            self.bullet_damage,
+            attack_range,
+        ))
     }
 
     pub fn draw(&self, renderer: &crate::renderer::Renderer, d: &mut RaylibDrawHandle) {

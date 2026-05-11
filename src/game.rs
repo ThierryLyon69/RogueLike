@@ -19,6 +19,7 @@ pub struct Game {
     wave: i32,
     enemies_per_wave: i32,
     shop_open: bool,
+    coins: i32,
 }
 
 impl Game {
@@ -38,6 +39,7 @@ impl Game {
             wave,
             enemies_per_wave,
             shop_open: false,
+            coins: 0,
         }
     }
 
@@ -92,7 +94,12 @@ impl Game {
         }
 
         self.bullets.retain(|bullet| bullet.is_alive());
+        let before = self.enemies.len();
         self.enemies.retain(|enemy| !enemy.is_dead());
+        let killed = before.saturating_sub(self.enemies.len());
+        if killed > 0 {
+            self.coins += killed as i32;
+        }
 
         if self.enemies.is_empty() {
             self.shop_open = true;
@@ -124,6 +131,7 @@ impl Game {
             self.player.upgrade_label(),
             self.wave,
             self.shop_open,
+            self.coins,
         );
 
         if self.game_over {
