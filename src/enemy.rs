@@ -3,6 +3,7 @@ use raylib::prelude::*;
 pub enum EnemyKind {
     Chaser,
     Shooter,
+    Skeleton,
 }
 
 pub struct Enemy {
@@ -14,7 +15,11 @@ pub struct Enemy {
 
 impl Enemy {
     pub fn new(kind: EnemyKind, pos: Vector2) -> Self {
-        let max_hp = 3;
+        let max_hp = match kind {
+            EnemyKind::Chaser => 3,
+            EnemyKind::Shooter => 2,
+            EnemyKind::Skeleton => 4,
+        };
         Self {
             pos,
             hp: max_hp,
@@ -32,6 +37,7 @@ impl Enemy {
         let color = match self.kind {
             EnemyKind::Chaser => Color::ORANGE,
             EnemyKind::Shooter => Color::PURPLE,
+            EnemyKind::Skeleton => Color::GRAY,
         };
 
         d.draw_rectangle_v(top_left, Vector2::new(size, size), color);

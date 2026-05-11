@@ -38,6 +38,10 @@ impl Bullet {
         self.alive
     }
 
+    pub fn kill(&mut self) {
+        self.alive = false;
+    }
+
     pub fn damage(&self) -> i32 {
         self.damage
     }

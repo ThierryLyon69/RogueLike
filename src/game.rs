@@ -1,8 +1,8 @@
 use raylib::prelude::*;
 
 use crate::{
-    bullet::Bullet, enemy::Enemy, enemy::EnemyKind, input::InputState, player::Player,
-    room::Room, ui::Ui,
+    bullet::Bullet, collision::aabb_intersects, enemy::Enemy, enemy::EnemyKind,
+    input::InputState, player::Player, room::Room, ui::Ui,
 };
 
 use crate::renderer::Renderer;
@@ -22,7 +22,11 @@ impl Game {
     pub fn new(renderer: Renderer) -> Self {
         Self {
             player: Player::new(Vector2::new(480.0, 270.0)),
-            enemies: vec![Enemy::new(EnemyKind::Chaser, Vector2::new(640.0, 270.0))],
+            enemies: vec![
+                Enemy::new(EnemyKind::Skeleton, Vector2::new(640.0, 270.0)),
+                Enemy::new(EnemyKind::Skeleton, Vector2::new(540.0, 270.0)),
+                Enemy::new(EnemyKind::Skeleton, Vector2::new(440.0, 270.0)),
+            ],
             bullets: Vec::new(),
             room: Room::new(0.0, 0.0, 960.0, 540.0),
             ui: Ui::new(),
@@ -50,7 +54,21 @@ impl Game {
         for bullet in &mut self.bullets {
             bullet.update(dt, self.room.bounds);
         }
+
+        for enemy in &mut self.enemies {
+            for bullet in &mut self.bullets {
+                if !bullet.is_alive() {
+                    continue;
+                }
+                if aabb_intersects(bullet.hitbox(), enemy.hitbox()) {
+                    enemy.damage(bullet.damage());
+                    bullet.kill();
+                }
+            }
+        }
+
         self.bullets.retain(|bullet| bullet.is_alive());
+        self.enemies.retain(|enemy| !enemy.is_dead());
 
         if self.player.hp <= 0 {
             self.game_over = true;
