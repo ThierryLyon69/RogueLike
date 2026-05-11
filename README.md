@@ -1,62 +1,42 @@
-# RogueLike Prototype (raylib + Rust)
+# RogueLike
 
-Mini prototype de roguelike 2D top-down, developpe sans moteur de jeu.
-Stack: Rust + raylib-rs + Cargo. Le code vise un mini moteur 2D specialise, pas un engine generaliste.
+Un petit jeu roguelike en Rust avec Raylib.
 
-## Objectifs
+## Fonctionnalités
+- Déplacement du héros
+- Animation du héros (sprites configurables via .env)
+- Tir et gestion des projectiles
+- Apparition d’ennemis (ex : squelette)
+- Barre de vie pour les ennemis
+- Collisions tirs/ennemis
+- Gestion de plusieurs types d’ennemis
 
-- Apprendre le game dev bas niveau
-- Comprendre l architecture d un jeu
-- Obtenir un prototype jouable rapidement
-- Garder un code propre, performant, modulaire
+## Installation
 
-## Style et gameplay
+1. Installez Rust : https://rustup.rs/
+2. Clonez le repo et placez-vous dans le dossier :
+   ```sh
+   git clone <repo-url>
+   cd RogueLike
+   ```
+3. Installez les dépendances Raylib (voir https://github.com/deltaphc/raylib-rs#dependencies)
+4. Lancez le jeu :
+   ```sh
+   cargo run
+   ```
 
-Inspirations: The Binding of Isaac, Vampire Survivors, Enter the Gungeon.
-Visuel: pixel art minimaliste, vue du dessus, ambiance sombre sci-fi.
-Le prototype peut utiliser des rectangles colores et des placeholders.
+## Configuration
 
-Le gameplay doit etre rapide, satisfaisant, responsive, avec feedbacks simples:
+Tous les chemins vers les sprites et animations sont configurables dans le fichier `.env`.
 
-- hit feedback
-- petit ecran shake
-- flash quand un ennemi prend un coup
-
-## Architecture cible
-
+Exemple :
 ```
-/src
-	main.rs
-	game.rs
-	renderer.rs
-	input.rs
-	player.rs
-	enemy.rs
-	bullet.rs
-	room.rs
-	collision.rs
-	upgrade.rs
-	ui.rs
-
-/assets
-	/sprites
-	/audio
-	/fonts
-
-/Cargo.toml
+HERO_IDLE_FRAMES=assets/sprites/frames/hero/frame_0_0.png;assets/sprites/frames/hero/frame_0_1.png
+BULLET_SPRITE=assets/sprites/frames/fireball/fireball_0.png
 ```
 
-## Boucle principale
-
-Le jeu utilise une game loop classique avec delta time:
-
-```
-while running {
-	handle_input();
-	update(delta_time);
-	render();
-}
-```
+## TODO
+Voir le fichier `todo.md` pour les tâches à venir.
 
 ## Features du prototype
 
