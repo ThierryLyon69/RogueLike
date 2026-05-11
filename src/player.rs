@@ -2,6 +2,8 @@ use raylib::prelude::*;
 
 use crate::{bullet::Bullet, input::InputState, renderer::HeroAnimKind};
 
+const PLAYER_MAX_HP: i32 = 5;
+
 pub struct Player {
     pos: Vector2,
     speed: f32,
@@ -37,7 +39,7 @@ impl Player {
         Self {
             pos,
             speed: 220.0,
-            hp: 5,
+            hp: PLAYER_MAX_HP,
             upgrade: PlayerUpgrade::None,
             fire_timer: 0.0,
             fire_interval: 0.18,
@@ -61,6 +63,10 @@ impl Player {
 
     pub fn damage(&mut self, dmg: i32) {
         self.hp -= dmg;
+    }
+
+    pub fn heal(&mut self, amount: i32) {
+        self.hp = (self.hp + amount).min(PLAYER_MAX_HP);
     }
 
     pub fn update(&mut self, input: &InputState, dt: f32, bounds: Rectangle) {

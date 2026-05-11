@@ -11,6 +11,7 @@ pub struct Game {
     player: Player,
     enemies: Vec<Enemy>,
     bullets: Vec<Bullet>,
+    items: Vec<Vector2>,
     room: Room,
     ui: Ui,
     input: InputState,
@@ -31,6 +32,7 @@ impl Game {
             player: Player::new(Vector2::new(480.0, 270.0)),
             enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds),
             bullets: Vec::new(),
+            items: Vec::new(),
             room,
             ui: Ui::new(),
             input: InputState::default(),
@@ -65,6 +67,21 @@ impl Game {
         }
 
         let player_pos = self.player.pos();
+        let pickup_radius = 14.0;
+        let pickup_radius_sq = pickup_radius * pickup_radius;
+        let mut picked_up = 0;
+        self.items.retain(|item_pos| {
+            let dist_sq = (player_pos - *item_pos).length_sqr();
+            if dist_sq <= pickup_radius_sq {
+                picked_up += 1;
+                false
+            } else {
+                true
+            }
+        });
+        if picked_up > 0 {
+            self.player.heal(picked_up);
+        }
 
         for enemy in &mut self.enemies {
             enemy.update(player_pos, dt);
@@ -95,10 +112,27 @@ impl Game {
 
         self.bullets.retain(|bullet| bullet.is_alive());
         let before = self.enemies.len();
-        self.enemies.retain(|enemy| !enemy.is_dead());
+        // Collect positions of dead enemies for item drop
+        let mut dead_positions = vec![];
+        self.enemies.retain(|enemy| {
+            if enemy.is_dead() {
+                dead_positions.push(enemy.pos());
+                false
+            } else {
+                true
+            }
+        });
         let killed = before.saturating_sub(self.enemies.len());
         if killed > 0 {
             self.coins += killed as i32;
+            use rand::Rng;
+            let mut rng = rand::thread_rng();
+            for pos in dead_positions {
+                // 30% de chance de drop
+                if rng.gen_bool(0.3) {
+                    self.items.push(pos);
+                }
+            }
         }
 
         if self.enemies.is_empty() {
@@ -121,6 +155,10 @@ impl Game {
 
         for bullet in &self.bullets {
             bullet.draw(&self.renderer, d);
+        }
+
+        for item_pos in &self.items {
+            d.draw_circle_v(*item_pos, 6.0, Color::GREEN);
         }
 
         self.ui.draw(

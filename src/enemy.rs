@@ -51,6 +51,10 @@ impl Enemy {
         }
     }
 
+    pub fn pos(&self) -> Vector2 {
+        self.pos
+    }
+
     pub fn try_melee_attack(&mut self, player_pos: Vector2) -> Option<i32> {
         match self.kind {
             EnemyKind::Skeleton => {

@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 raylib = "5.0"
 dotenvy = "0.15"
+rand = "0.8"
