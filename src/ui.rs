@@ -14,6 +14,8 @@ impl Ui {
         hp: i32,
         enemy_count: i32,
         upgrade_label: &str,
+        wave: i32,
+        shop_open: bool,
     ) {
         d.draw_text(&format!("HP: {}", hp), 12, 10, 20, Color::RAYWHITE);
         d.draw_text(&format!("FPS: {}", fps), 12, 34, 18, Color::RAYWHITE);
@@ -31,5 +33,9 @@ impl Ui {
             18,
             Color::RAYWHITE,
         );
+        d.draw_text(&format!("Wave: {}", wave), 12, 100, 18, Color::RAYWHITE);
+        if shop_open {
+            d.draw_text("Shop: OPEN (E)", 12, 122, 18, Color::GOLD);
+        }
     }
 }

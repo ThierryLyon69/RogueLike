@@ -16,23 +16,28 @@ pub struct Game {
     input: InputState,
     game_over: bool,
     renderer: Renderer,
+    wave: i32,
+    enemies_per_wave: i32,
+    shop_open: bool,
 }
 
 impl Game {
     pub fn new(renderer: Renderer) -> Self {
+        let wave = 1;
+        let enemies_per_wave = 3;
+        let room = Room::new(0.0, 0.0, 960.0, 540.0);
         Self {
             player: Player::new(Vector2::new(480.0, 270.0)),
-            enemies: vec![
-                Enemy::new(EnemyKind::Skeleton, Vector2::new(640.0, 270.0)),
-                Enemy::new(EnemyKind::Skeleton, Vector2::new(540.0, 270.0)),
-                Enemy::new(EnemyKind::Skeleton, Vector2::new(440.0, 270.0)),
-            ],
+            enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds),
             bullets: Vec::new(),
-            room: Room::new(0.0, 0.0, 960.0, 540.0),
+            room,
             ui: Ui::new(),
             input: InputState::default(),
             game_over: false,
             renderer,
+            wave,
+            enemies_per_wave,
+            shop_open: false,
         }
     }
 
@@ -46,6 +51,16 @@ impl Game {
         }
 
         self.player.update(&self.input, dt, self.room.bounds);
+
+        if self.shop_open {
+            if self.input.shop_confirm {
+                self.shop_open = false;
+                self.wave += 1;
+                self.enemies_per_wave += 1;
+                self.enemies = Self::spawn_wave_enemies(self.enemies_per_wave, self.room.bounds);
+            }
+            return;
+        }
 
         let player_pos = self.player.pos();
 
@@ -79,6 +94,11 @@ impl Game {
         self.bullets.retain(|bullet| bullet.is_alive());
         self.enemies.retain(|enemy| !enemy.is_dead());
 
+        if self.enemies.is_empty() {
+            self.shop_open = true;
+            self.bullets.clear();
+        }
+
         if self.player.hp <= 0 {
             self.game_over = true;
         }
@@ -102,10 +122,26 @@ impl Game {
             self.player.hp,
             self.enemies.len() as i32,
             self.player.upgrade_label(),
+            self.wave,
+            self.shop_open,
         );
 
         if self.game_over {
             d.draw_text("GAME OVER", 360, 250, 24, Color::RED);
         }
+    }
+
+    fn spawn_wave_enemies(count: i32, bounds: Rectangle) -> Vec<Enemy> {
+        let mut enemies = Vec::new();
+        let center = Vector2::new(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.5);
+        let radius = 180.0;
+        let total = count.max(1) as usize;
+        for i in 0..total {
+            let angle = (i as f32) / (total as f32) * std::f32::consts::PI * 2.0;
+            let offset = Vector2::new(angle.cos() * radius, angle.sin() * radius);
+            let pos = center + offset;
+            enemies.push(Enemy::new(EnemyKind::Skeleton, pos));
+        }
+        enemies
     }
 }

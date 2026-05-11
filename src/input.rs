@@ -5,6 +5,7 @@ pub struct InputState {
     pub move_dir: Vector2,
     pub shoot: bool,
     pub aim_pos: Vector2,
+    pub shop_confirm: bool,
 }
 
 impl Default for InputState {
@@ -13,6 +14,7 @@ impl Default for InputState {
             move_dir: Vector2::new(0.0, 0.0),
             shoot: false,
             aim_pos: Vector2::new(0.0, 0.0),
+            shop_confirm: false,
         }
     }
 }
@@ -38,6 +40,7 @@ impl InputState {
             move_dir: dir,
             shoot: rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT),
             aim_pos: rl.get_mouse_position(),
+            shop_confirm: rl.is_key_pressed(KeyboardKey::KEY_E),
         }
     }
 }
