@@ -28,7 +28,23 @@ impl Enemy {
         }
     }
 
-    pub fn update(&mut self, _player_pos: Vector2, _dt: f32) {}
+    pub fn update(&mut self, player_pos: Vector2, dt: f32) {
+        match self.kind {
+            EnemyKind::Skeleton => {
+                let detection_radius = 160.0;
+                let attack_radius = 22.0;
+                let speed = 80.0;
+                let to_player = player_pos - self.pos;
+                let dist = to_player.length();
+                if dist < detection_radius && dist > attack_radius {
+                    let dir = to_player.normalized();
+                    self.pos += dir * speed * dt;
+                }
+                // Si besoin, ici on pourrait gérer une attaque si dist < attack_radius
+            }
+            _ => {}
+        }
+    }
 
     pub fn draw(&self, d: &mut RaylibDrawHandle) {
         let size = 18.0;

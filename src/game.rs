@@ -47,6 +47,12 @@ impl Game {
 
         self.player.update(&self.input, dt, self.room.bounds);
 
+        let player_pos = self.player.pos();
+
+        for enemy in &mut self.enemies {
+            enemy.update(player_pos, dt);
+        }
+
         if let Some(bullet) = self.player.try_shoot(&self.input) {
             self.bullets.push(bullet);
         }

@@ -53,6 +53,10 @@ impl Player {
         }
     }
 
+    pub fn pos(&self) -> Vector2 {
+        self.pos
+    }
+
     pub fn update(&mut self, input: &InputState, dt: f32, bounds: Rectangle) {
         let mut dir = input.move_dir;
         if dir.length() > 1.0 {
