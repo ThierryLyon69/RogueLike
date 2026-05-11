@@ -4,6 +4,8 @@ use crate::{
     bullet::Bullet, enemy::Enemy, input::InputState, player::Player, room::Room, ui::Ui,
 };
 
+use crate::renderer::Renderer;
+
 pub struct Game {
     player: Player,
     enemies: Vec<Enemy>,
@@ -12,10 +14,11 @@ pub struct Game {
     ui: Ui,
     input: InputState,
     game_over: bool,
+    renderer: Renderer,
 }
 
 impl Game {
-    pub fn new() -> Self {
+    pub fn new(renderer: Renderer) -> Self {
         Self {
             player: Player::new(Vector2::new(480.0, 270.0)),
             enemies: Vec::new(),
@@ -24,6 +27,7 @@ impl Game {
             ui: Ui::new(),
             input: InputState::default(),
             game_over: false,
+            renderer,
         }
     }
 
@@ -38,6 +42,15 @@ impl Game {
 
         self.player.update(&self.input, dt, self.room.bounds);
 
+        if let Some(bullet) = self.player.try_shoot(&self.input) {
+            self.bullets.push(bullet);
+        }
+
+        for bullet in &mut self.bullets {
+            bullet.update(dt, self.room.bounds);
+        }
+        self.bullets.retain(|bullet| bullet.is_alive());
+
         if self.player.hp <= 0 {
             self.game_over = true;
         }
@@ -45,14 +58,14 @@ impl Game {
 
     pub fn render(&self, d: &mut RaylibDrawHandle, fps: i32) {
         self.room.draw(d);
-        self.player.draw(d);
+        self.player.draw(&self.renderer, d);
 
         for enemy in &self.enemies {
             enemy.draw(d);
         }
 
         for bullet in &self.bullets {
-            bullet.draw(d);
+            bullet.draw(&self.renderer, d);
         }
 
         self.ui.draw(

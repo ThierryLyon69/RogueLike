@@ -9,17 +9,22 @@ mod room;
 mod ui;
 mod upgrade;
 
+
 use game::Game;
+use dotenvy::dotenv;
 use raylib::prelude::*;
+use renderer::Renderer;
 
 fn main() {
+    dotenv().ok();
     let (mut rl, thread) = raylib::init()
         .size(960, 540)
         .title("RogueLike Prototype")
         .vsync()
         .build();
 
-    let mut game = Game::new();
+    let renderer = Renderer::new(&mut rl, &thread);
+    let mut game = Game::new(renderer);
 
     while !rl.window_should_close() {
         let dt = rl.get_frame_time();

@@ -24,11 +24,8 @@ impl Bullet {
         }
     }
 
-    pub fn draw(&self, d: &mut RaylibDrawHandle) {
-        let size = 6.0;
-        let half = size * 0.5;
-        let top_left = Vector2::new(self.pos.x - half, self.pos.y - half);
-        d.draw_rectangle_v(top_left, Vector2::new(size, size), Color::YELLOW);
+    pub fn draw(&self, renderer: &crate::renderer::Renderer, d: &mut RaylibDrawHandle) {
+        renderer.draw_bullet(d, self.pos);
     }
 
     pub fn hitbox(&self) -> Rectangle {
