@@ -1,7 +1,8 @@
 use raylib::prelude::*;
 
 use crate::{
-    bullet::Bullet, enemy::Enemy, input::InputState, player::Player, room::Room, ui::Ui,
+    bullet::Bullet, enemy::Enemy, enemy::EnemyKind, input::InputState, player::Player,
+    room::Room, ui::Ui,
 };
 
 use crate::renderer::Renderer;
@@ -21,7 +22,7 @@ impl Game {
     pub fn new(renderer: Renderer) -> Self {
         Self {
             player: Player::new(Vector2::new(480.0, 270.0)),
-            enemies: Vec::new(),
+            enemies: vec![Enemy::new(EnemyKind::Chaser, Vector2::new(640.0, 270.0))],
             bullets: Vec::new(),
             room: Room::new(0.0, 0.0, 960.0, 540.0),
             ui: Ui::new(),
