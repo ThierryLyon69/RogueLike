@@ -22,31 +22,31 @@ impl Renderer {
             rl,
             thread,
             "HERO_IDLE_FRAMES",
-            "assets/sprites/frames/frame_0_0.png;assets/sprites/frames/frame_0_1.png",
+            "assets/sprites/frames/hero/frame_0_0.png;assets/sprites/frames/hero/frame_0_1.png",
         );
         let hero_walk_frames = load_textures_env(
             rl,
             thread,
             "HERO_WALK_FRAMES",
-            "assets/sprites/frames/frame_1_0.png;assets/sprites/frames/frame_1_1.png",
+            "assets/sprites/frames/hero/frame_1_0.png;assets/sprites/frames/hero/frame_1_1.png",
         );
         let hero_attack_frames = load_textures_env(
             rl,
             thread,
             "HERO_ATTACK_FRAMES",
-            "assets/sprites/frames/frame_2_0.png;assets/sprites/frames/frame_2_1.png",
+            "assets/sprites/frames/hero/frame_2_0.png;assets/sprites/frames/hero/frame_2_1.png",
         );
         let bullet_texture = load_texture_env(
             rl,
             thread,
             "BULLET_SPRITE",
-            "assets/sprites/frames/frame_3_0.png",
+            "assets/sprites/frames/fireball/fireball_0.png",
         );
         let coin_texture = load_texture_env(
             rl,
             thread,
             "COIN_SPRITE",
-            "assets/sprites/frames/frame_1_2.png",
+            "assets/sprites/frames/hero/frame_1_2.png",
         );
         Self {
             hero_idle_frames,
