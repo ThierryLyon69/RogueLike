@@ -1,0 +1,102 @@
+src/enemy.rs:3: trailing whitespace.
+[32m+[m[32m#[derive(Clone, Copy)][m[41m[m
+src/enemy.rs:16: trailing whitespace.
+[32m+[m[32m    stats: EnemyStats,[m[41m[m
+src/enemy.rs:17: trailing whitespace.
+[32m+[m[32m}[m[41m[m
+src/enemy.rs:18: trailing whitespace.
+[32m+[m[41m[m
+src/enemy.rs:19: trailing whitespace.
+[32m+[m[32mstruct EnemyStats {[m[41m[m
+src/enemy.rs:20: trailing whitespace.
+[32m+[m[32m    max_hp: i32,[m[41m[m
+src/enemy.rs:21: trailing whitespace.
+[32m+[m[32m    detection_radius: f32,[m[41m[m
+src/enemy.rs:22: trailing whitespace.
+[32m+[m[32m    attack_radius: f32,[m[41m[m
+src/enemy.rs:23: trailing whitespace.
+[32m+[m[32m    speed: f32,[m[41m[m
+src/enemy.rs:24: trailing whitespace.
+[32m+[m[32m    damage: i32,[m[41m[m
+src/enemy.rs:25: trailing whitespace.
+[32m+[m[32m    attack_interval: f32,[m[41m[m
+src/enemy.rs:29: trailing whitespace.
+[32m+[m[32m    pub fn new(kind: EnemyKind, pos: Vector2, wave: i32) -> Self {[m[41m[m
+src/enemy.rs:30: trailing whitespace.
+[32m+[m[32m        let stats = scaled_stats(kind, wave);[m[41m[m
+src/enemy.rs:31: trailing whitespace.
+[32m+[m[32m        let max_hp = stats.max_hp;[m[41m[m
+src/enemy.rs:38: trailing whitespace.
+[32m+[m[32m            stats,[m[41m[m
+src/enemy.rs:51: trailing whitespace.
+[32m+[m[32m                if dist < self.stats.detection_radius && dist > self.stats.attack_radius {[m[41m[m
+src/enemy.rs:53: trailing whitespace.
+[32m+[m[32m                    self.pos += dir * self.stats.speed * dt;[m[41m[m
+src/enemy.rs:68: trailing whitespace.
+[32m+[m[32m                if dist <= self.stats.attack_radius && self.attack_cooldown <= 0.0 {[m[41m[m
+src/enemy.rs:69: trailing whitespace.
+[32m+[m[32m                    self.attack_cooldown = self.stats.attack_interval;[m[41m[m
+src/enemy.rs:70: trailing whitespace.
+[32m+[m[32m                    return Some(self.stats.damage);[m[41m[m
+src/enemy.rs:126: trailing whitespace.
+[32m+[m[41m[m
+src/enemy.rs:127: trailing whitespace.
+[32m+[m[32mfn scaled_stats(kind: EnemyKind, wave: i32) -> EnemyStats {[m[41m[m
+src/enemy.rs:128: trailing whitespace.
+[32m+[m[32m    let wave_idx = (wave - 1).max(0) as f32;[m[41m[m
+src/enemy.rs:129: trailing whitespace.
+[32m+[m[32m    let (base_hp, base_detection, base_attack, base_speed, base_damage, base_interval) =[m[41m[m
+src/enemy.rs:130: trailing whitespace.
+[32m+[m[32m        match kind {[m[41m[m
+src/enemy.rs:131: trailing whitespace.
+[32m+[m[32m            EnemyKind::Chaser => (3, 200.0, 20.0, 90.0, 1, 0.8),[m[41m[m
+src/enemy.rs:132: trailing whitespace.
+[32m+[m[32m            EnemyKind::Shooter => (2, 240.0, 18.0, 70.0, 1, 0.9),[m[41m[m
+src/enemy.rs:133: trailing whitespace.
+[32m+[m[32m            EnemyKind::Skeleton => (4, 220.0, 22.0, 80.0, 1, 0.8),[m[41m[m
+src/enemy.rs:134: trailing whitespace.
+[32m+[m[32m        };[m[41m[m
+src/enemy.rs:135: trailing whitespace.
+[32m+[m[41m[m
+src/enemy.rs:136: trailing whitespace.
+[32m+[m[32m    let max_hp = base_hp + wave_idx.round() as i32;[m[41m[m
+src/enemy.rs:137: trailing whitespace.
+[32m+[m[32m    let detection_radius = base_detection + wave_idx * 4.0;[m[41m[m
+src/enemy.rs:138: trailing whitespace.
+[32m+[m[32m    let attack_radius = base_attack + wave_idx * 0.4;[m[41m[m
+src/enemy.rs:139: trailing whitespace.
+[32m+[m[32m    let speed = base_speed + wave_idx * 1.2;[m[41m[m
+src/enemy.rs:140: trailing whitespace.
+[32m+[m[32m    let damage = base_damage + (wave_idx / 3.0).floor() as i32;[m[41m[m
+src/enemy.rs:141: trailing whitespace.
+[32m+[m[32m    let attack_interval = (base_interval - wave_idx * 0.01).max(0.5);[m[41m[m
+src/enemy.rs:142: trailing whitespace.
+[32m+[m[41m[m
+src/enemy.rs:143: trailing whitespace.
+[32m+[m[32m    EnemyStats {[m[41m[m
+src/enemy.rs:144: trailing whitespace.
+[32m+[m[32m        max_hp,[m[41m[m
+src/enemy.rs:145: trailing whitespace.
+[32m+[m[32m        detection_radius,[m[41m[m
+src/enemy.rs:146: trailing whitespace.
+[32m+[m[32m        attack_radius,[m[41m[m
+src/enemy.rs:147: trailing whitespace.
+[32m+[m[32m        speed,[m[41m[m
+src/enemy.rs:148: trailing whitespace.
+[32m+[m[32m        damage,[m[41m[m
+src/enemy.rs:149: trailing whitespace.
+[32m+[m[32m        attack_interval,[m[41m[m
+src/enemy.rs:150: trailing whitespace.
+[32m+[m[32m    }[m[41m[m
+src/enemy.rs:151: trailing whitespace.
+[32m+[m[32m}[m[41m[m
+src/game.rs:34: trailing whitespace.
+[32m+[m[32m            enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds, wave),[m[41m[m
+src/game.rs:75: trailing whitespace.
+[32m+[m[32m                self.enemies =[m[41m[m
+src/game.rs:76: trailing whitespace.
+[32m+[m[32m                    Self::spawn_wave_enemies(self.enemies_per_wave, self.room.bounds, self.wave);[m[41m[m
+src/game.rs:194: trailing whitespace.
+[32m+[m[32m    fn spawn_wave_enemies(count: i32, bounds: Rectangle, wave: i32) -> Vec<Enemy> {[m[41m[m
+src/game.rs:203: trailing whitespace.
+[32m+[m[32m            enemies.push(Enemy::new(EnemyKind::Skeleton, pos, wave));[m[41m[m

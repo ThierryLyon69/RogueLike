@@ -31,7 +31,7 @@ impl Game {
         let room = Room::new(0.0, 0.0, 960.0, 540.0);
         Self {
             player: Player::new(Vector2::new(480.0, 270.0)),
-            enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds),
+            enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds, wave),
             bullets: Vec::new(),
             items: Vec::new(),
             room,
@@ -72,7 +72,8 @@ impl Game {
                 self.shop_open = false;
                 self.wave += 1;
                 self.enemies_per_wave += 1;
-                self.enemies = Self::spawn_wave_enemies(self.enemies_per_wave, self.room.bounds);
+                self.enemies =
+                    Self::spawn_wave_enemies(self.enemies_per_wave, self.room.bounds, self.wave);
             }
             return;
         }
@@ -190,7 +191,7 @@ impl Game {
         }
     }
 
-    fn spawn_wave_enemies(count: i32, bounds: Rectangle) -> Vec<Enemy> {
+    fn spawn_wave_enemies(count: i32, bounds: Rectangle, wave: i32) -> Vec<Enemy> {
         let mut enemies = Vec::new();
         let center = Vector2::new(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.5);
         let radius = 180.0;
@@ -199,7 +200,7 @@ impl Game {
             let angle = (i as f32) / (total as f32) * std::f32::consts::PI * 2.0;
             let offset = Vector2::new(angle.cos() * radius, angle.sin() * radius);
             let pos = center + offset;
-            enemies.push(Enemy::new(EnemyKind::Skeleton, pos));
+            enemies.push(Enemy::new(EnemyKind::Skeleton, pos, wave));
         }
         enemies
     }

@@ -1,5 +1,6 @@
 use raylib::prelude::*;
 
+#[derive(Clone, Copy)]
 pub enum EnemyKind {
     Chaser,
     Shooter,
@@ -12,21 +13,29 @@ pub struct Enemy {
     max_hp: i32,
     kind: EnemyKind,
     attack_cooldown: f32,
+    stats: EnemyStats,
+}
+
+struct EnemyStats {
+    max_hp: i32,
+    detection_radius: f32,
+    attack_radius: f32,
+    speed: f32,
+    damage: i32,
+    attack_interval: f32,
 }
 
 impl Enemy {
-    pub fn new(kind: EnemyKind, pos: Vector2) -> Self {
-        let max_hp = match kind {
-            EnemyKind::Chaser => 3,
-            EnemyKind::Shooter => 2,
-            EnemyKind::Skeleton => 4,
-        };
+    pub fn new(kind: EnemyKind, pos: Vector2, wave: i32) -> Self {
+        let stats = scaled_stats(kind, wave);
+        let max_hp = stats.max_hp;
         Self {
             pos,
             hp: max_hp,
             max_hp,
             kind,
             attack_cooldown: 0.0,
+            stats,
         }
     }
 
@@ -37,14 +46,11 @@ impl Enemy {
 
         match self.kind {
             EnemyKind::Skeleton => {
-                let detection_radius = 220.0;
-                let attack_radius = 22.0;
-                let speed = 80.0;
                 let to_player = player_pos - self.pos;
                 let dist = to_player.length();
-                if dist < detection_radius && dist > attack_radius {
+                if dist < self.stats.detection_radius && dist > self.stats.attack_radius {
                     let dir = to_player.normalized();
-                    self.pos += dir * speed * dt;
+                    self.pos += dir * self.stats.speed * dt;
                 }
             }
             _ => {}
@@ -58,13 +64,10 @@ impl Enemy {
     pub fn try_melee_attack(&mut self, player_pos: Vector2) -> Option<i32> {
         match self.kind {
             EnemyKind::Skeleton => {
-                let attack_radius = 32.0;
-                let attack_interval = 0.8;
-                let damage = 1;
                 let dist = (player_pos - self.pos).length();
-                if dist <= attack_radius && self.attack_cooldown <= 0.0 {
-                    self.attack_cooldown = attack_interval;
-                    return Some(damage);
+                if dist <= self.stats.attack_radius && self.attack_cooldown <= 0.0 {
+                    self.attack_cooldown = self.stats.attack_interval;
+                    return Some(self.stats.damage);
                 }
                 None
             }
@@ -118,5 +121,31 @@ impl Enemy {
 
     pub fn is_dead(&self) -> bool {
         self.hp <= 0
+    }
+}
+
+fn scaled_stats(kind: EnemyKind, wave: i32) -> EnemyStats {
+    let wave_idx = (wave - 1).max(0) as f32;
+    let (base_hp, base_detection, base_attack, base_speed, base_damage, base_interval) =
+        match kind {
+            EnemyKind::Chaser => (3, 200.0, 20.0, 90.0, 1, 0.8),
+            EnemyKind::Shooter => (2, 240.0, 18.0, 70.0, 1, 0.9),
+            EnemyKind::Skeleton => (4, 220.0, 22.0, 80.0, 1, 0.8),
+        };
+
+    let max_hp = base_hp + wave_idx.round() as i32;
+    let detection_radius = base_detection + wave_idx * 4.0;
+    let attack_radius = base_attack + wave_idx * 0.4;
+    let speed = base_speed + wave_idx * 1.2;
+    let damage = base_damage + (wave_idx / 3.0).floor() as i32;
+    let attack_interval = (base_interval - wave_idx * 0.01).max(0.5);
+
+    EnemyStats {
+        max_hp,
+        detection_radius,
+        attack_radius,
+        speed,
+        damage,
+        attack_interval,
     }
 }

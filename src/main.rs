@@ -10,7 +10,6 @@ mod shop;
 mod ui;
 mod upgrade;
 
-
 use game::Game;
 use dotenvy::dotenv;
 use raylib::prelude::*;
