@@ -2,7 +2,7 @@ use raylib::prelude::*;
 
 use crate::{
     bullet::Bullet, collision::aabb_intersects, enemy::Enemy, enemy::EnemyKind,
-    input::InputState, player::Player, room::Room, ui::Ui,
+    input::InputState, player::Player, room::Room, shop::roll_offers, shop::ShopItem, ui::Ui,
 };
 
 use crate::renderer::Renderer;
@@ -21,6 +21,7 @@ pub struct Game {
     enemies_per_wave: i32,
     shop_open: bool,
     coins: i32,
+    shop_offers: Vec<Option<ShopItem>>,
 }
 
 impl Game {
@@ -42,6 +43,7 @@ impl Game {
             enemies_per_wave,
             shop_open: false,
             coins: 0,
+            shop_offers: Vec::new(),
         }
     }
 
@@ -57,6 +59,15 @@ impl Game {
         self.player.update(&self.input, dt, self.room.bounds);
 
         if self.shop_open {
+            if self.input.shop_buy_1 {
+                self.try_buy_offer(0);
+            }
+            if self.input.shop_buy_2 {
+                self.try_buy_offer(1);
+            }
+            if self.input.shop_buy_3 {
+                self.try_buy_offer(2);
+            }
             if self.input.shop_confirm {
                 self.shop_open = false;
                 self.wave += 1;
@@ -135,9 +146,10 @@ impl Game {
             }
         }
 
-        if self.enemies.is_empty() {
+        if self.enemies.is_empty() && !self.shop_open {
             self.shop_open = true;
             self.bullets.clear();
+            self.shop_offers = roll_offers(3).into_iter().map(Some).collect();
         }
 
         if self.player.hp <= 0 {
@@ -170,6 +182,7 @@ impl Game {
             self.wave,
             self.shop_open,
             self.coins,
+            &self.shop_offers,
         );
 
         if self.game_over {
@@ -189,5 +202,20 @@ impl Game {
             enemies.push(Enemy::new(EnemyKind::Skeleton, pos));
         }
         enemies
+    }
+
+    fn try_buy_offer(&mut self, index: usize) {
+        let offer = match self.shop_offers.get(index) {
+            Some(Some(item)) => *item,
+            _ => return,
+        };
+        if self.coins < offer.cost {
+            return;
+        }
+        self.coins -= offer.cost;
+        offer.apply(&mut self.player);
+        if let Some(slot) = self.shop_offers.get_mut(index) {
+            *slot = None;
+        }
     }
 }

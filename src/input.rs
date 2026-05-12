@@ -6,6 +6,9 @@ pub struct InputState {
     pub shoot: bool,
     pub aim_pos: Vector2,
     pub shop_confirm: bool,
+    pub shop_buy_1: bool,
+    pub shop_buy_2: bool,
+    pub shop_buy_3: bool,
 }
 
 impl Default for InputState {
@@ -15,6 +18,9 @@ impl Default for InputState {
             shoot: false,
             aim_pos: Vector2::new(0.0, 0.0),
             shop_confirm: false,
+            shop_buy_1: false,
+            shop_buy_2: false,
+            shop_buy_3: false,
         }
     }
 }
@@ -41,6 +47,9 @@ impl InputState {
             shoot: rl.is_mouse_button_down(MouseButton::MOUSE_BUTTON_LEFT),
             aim_pos: rl.get_mouse_position(),
             shop_confirm: rl.is_key_pressed(KeyboardKey::KEY_E),
+            shop_buy_1: rl.is_key_pressed(KeyboardKey::KEY_ONE),
+            shop_buy_2: rl.is_key_pressed(KeyboardKey::KEY_TWO),
+            shop_buy_3: rl.is_key_pressed(KeyboardKey::KEY_THREE),
         }
     }
 }
