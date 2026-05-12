@@ -2,7 +2,7 @@ use raylib::prelude::*;
 
 use crate::{
     bullet::Bullet, collision::aabb_intersects, enemy::Enemy, enemy::EnemyKind,
-    input::InputState, player::Player, room::Room, ui::Ui,
+    input::InputState, player::Player, room::Room, shop::roll_offers, shop::ShopItem, ui::Ui,
 };
 
 use crate::renderer::Renderer;
@@ -21,6 +21,7 @@ pub struct Game {
     enemies_per_wave: i32,
     shop_open: bool,
     coins: i32,
+    shop_offers: Vec<Option<ShopItem>>,
 }
 
 impl Game {
@@ -30,7 +31,7 @@ impl Game {
         let room = Room::new(0.0, 0.0, 960.0, 540.0);
         Self {
             player: Player::new(Vector2::new(480.0, 270.0)),
-            enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds),
+            enemies: Self::spawn_wave_enemies(enemies_per_wave, room.bounds, wave),
             bullets: Vec::new(),
             items: Vec::new(),
             room,
@@ -42,6 +43,7 @@ impl Game {
             enemies_per_wave,
             shop_open: false,
             coins: 0,
+            shop_offers: Vec::new(),
         }
     }
 
@@ -57,11 +59,21 @@ impl Game {
         self.player.update(&self.input, dt, self.room.bounds);
 
         if self.shop_open {
+            if self.input.shop_buy_1 {
+                self.try_buy_offer(0);
+            }
+            if self.input.shop_buy_2 {
+                self.try_buy_offer(1);
+            }
+            if self.input.shop_buy_3 {
+                self.try_buy_offer(2);
+            }
             if self.input.shop_confirm {
                 self.shop_open = false;
                 self.wave += 1;
                 self.enemies_per_wave += 1;
-                self.enemies = Self::spawn_wave_enemies(self.enemies_per_wave, self.room.bounds);
+                self.enemies =
+                    Self::spawn_wave_enemies(self.enemies_per_wave, self.room.bounds, self.wave);
             }
             return;
         }
@@ -135,9 +147,10 @@ impl Game {
             }
         }
 
-        if self.enemies.is_empty() {
+        if self.enemies.is_empty() && !self.shop_open {
             self.shop_open = true;
             self.bullets.clear();
+            self.shop_offers = roll_offers(3).into_iter().map(Some).collect();
         }
 
         if self.player.hp <= 0 {
@@ -170,6 +183,7 @@ impl Game {
             self.wave,
             self.shop_open,
             self.coins,
+            &self.shop_offers,
         );
 
         if self.game_over {
@@ -177,7 +191,7 @@ impl Game {
         }
     }
 
-    fn spawn_wave_enemies(count: i32, bounds: Rectangle) -> Vec<Enemy> {
+    fn spawn_wave_enemies(count: i32, bounds: Rectangle, wave: i32) -> Vec<Enemy> {
         let mut enemies = Vec::new();
         let center = Vector2::new(bounds.x + bounds.width * 0.5, bounds.y + bounds.height * 0.5);
         let radius = 180.0;
@@ -186,8 +200,23 @@ impl Game {
             let angle = (i as f32) / (total as f32) * std::f32::consts::PI * 2.0;
             let offset = Vector2::new(angle.cos() * radius, angle.sin() * radius);
             let pos = center + offset;
-            enemies.push(Enemy::new(EnemyKind::Skeleton, pos));
+            enemies.push(Enemy::new(EnemyKind::Skeleton, pos, wave));
         }
         enemies
+    }
+
+    fn try_buy_offer(&mut self, index: usize) {
+        let offer = match self.shop_offers.get(index) {
+            Some(Some(item)) => *item,
+            _ => return,
+        };
+        if self.coins < offer.cost {
+            return;
+        }
+        self.coins -= offer.cost;
+        offer.apply(&mut self.player);
+        if let Some(slot) = self.shop_offers.get_mut(index) {
+            *slot = None;
+        }
     }
 }

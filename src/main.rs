@@ -6,9 +6,9 @@ mod input;
 mod player;
 mod renderer;
 mod room;
+mod shop;
 mod ui;
 mod upgrade;
-
 
 use game::Game;
 use dotenvy::dotenv;

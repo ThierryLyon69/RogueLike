@@ -8,11 +8,13 @@ pub struct Player {
     pos: Vector2,
     speed: f32,
     pub hp: i32,
+    max_hp: i32,
     upgrade: PlayerUpgrade,
     fire_timer: f32,
     fire_interval: f32,
     bullet_speed: f32,
     bullet_damage: i32,
+    attack_range: f32,
     anim_timer: f32,
     anim_frame: usize,
     anim_frame_count: usize,
@@ -40,11 +42,13 @@ impl Player {
             pos,
             speed: 220.0,
             hp: PLAYER_MAX_HP,
+            max_hp: PLAYER_MAX_HP,
             upgrade: PlayerUpgrade::None,
             fire_timer: 0.0,
             fire_interval: 0.18,
             bullet_speed: 520.0,
             bullet_damage: 1,
+            attack_range: 220.0,
             anim_timer: 0.0,
             anim_frame: 0,
             anim_frame_count,
@@ -66,7 +70,28 @@ impl Player {
     }
 
     pub fn heal(&mut self, amount: i32) {
-        self.hp = (self.hp + amount).min(PLAYER_MAX_HP);
+        self.hp = (self.hp + amount).min(self.max_hp);
+    }
+
+    pub fn add_max_hp(&mut self, amount: i32) {
+        self.max_hp += amount;
+        self.hp = (self.hp + amount).min(self.max_hp);
+    }
+
+    pub fn add_damage(&mut self, amount: i32) {
+        self.bullet_damage += amount;
+    }
+
+    pub fn add_speed(&mut self, amount: f32) {
+        self.speed += amount;
+    }
+
+    pub fn reduce_fire_interval(&mut self, amount: f32) {
+        self.fire_interval = (self.fire_interval - amount).max(0.06);
+    }
+
+    pub fn add_attack_range(&mut self, amount: f32) {
+        self.attack_range += amount;
     }
 
     pub fn update(&mut self, input: &InputState, dt: f32, bounds: Rectangle) {
@@ -125,7 +150,6 @@ impl Player {
             return None;
         }
 
-        let attack_range = 220.0;
         let vel = dir.normalized() * self.bullet_speed;
         let spawn_offset = Vector2::new(6.0, 6.0);
         self.fire_timer = self.fire_interval;
@@ -133,7 +157,7 @@ impl Player {
             self.pos + spawn_offset,
             vel,
             self.bullet_damage,
-            attack_range,
+            self.attack_range,
         ))
     }
 
